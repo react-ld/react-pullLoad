@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server --hot --config webpack.demo.dev.config.js",
-    "build": "babel src --out-dir lib && cp src/*.less lib/",
+    "build": "node_modules/babel-cli/bin/babel.js  src --out-dir lib && cp src/*.less lib/",
     "demos": "webpack -p --optimize-dedupe --progress --config webpack.demo.dev.conf.js",
     "clean:demos": "rm -rf ../github.io/tloader",
     "clean:lib": "rm -rf lib/",
