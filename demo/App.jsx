@@ -49,8 +49,8 @@ export class App extends Component{
         <ReactPullLoad onRefresh={this.refresh.bind(this)} onLoadMore={this.loadMore.bind(this)} hasMore={hasMore}>
           <ul className="test-ul">
             {
-              data.map( str =>{
-                return <li key={str}><img src={str} alt=""/></li>
+              data.map( (str, index )=>{
+                return <li key={index}><img src={str} alt=""/></li>
               })
             }
           </ul>

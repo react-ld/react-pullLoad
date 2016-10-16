@@ -1,12 +1,12 @@
 {
-  "name": "react_pullload",
+  "name": "react-pullload",
   "version": "0.0.1",
-  "description": "",
-  "main": "index.js",
+  "description": "React compopnent pull down refresh and pull up load more",
+  "main": "./lib/ReactPullLoad.js",
   "scripts": {
     "start": "webpack-dev-server --hot --config webpack.demo.dev.config.js",
     "build": "node_modules/babel-cli/bin/babel.js  src --out-dir lib && cp src/*.less lib/",
-    "demos": "webpack -p --optimize-dedupe --progress --config webpack.demo.dev.conf.js",
+    "demo": "webpack -p --optimize-dedupe --progress --config webpack.demo.config.js",
     "clean:demos": "rm -rf ../github.io/tloader",
     "clean:lib": "rm -rf lib/",
     "test": "echo \"Error: no test specified\" && exit 1"
