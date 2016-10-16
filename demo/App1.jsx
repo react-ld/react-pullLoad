@@ -46,7 +46,7 @@ export class App extends Component{
     const {data, hasMore} = this.state
     return (
       <div>
-        <ReactPullLoad downEnough={150} onRefresh={this.refresh.bind(this)} onLoadMore={this.loadMore.bind(this)} hasMore={hasMore}>
+        <ReactPullLoad className="block" style={{top:"200px"}} isBlockContainer={true} onRefresh={this.refresh.bind(this)} onLoadMore={this.loadMore.bind(this)} hasMore={hasMore}>
           <ul className="test-ul">
             {
               data.map( (str, index )=>{

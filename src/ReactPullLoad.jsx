@@ -40,6 +40,9 @@ export default class ReactPullLoad extends Component {
     this.onTouchStart = this.onTouchStart.bind(this)
     this.onTouchMove = this.onTouchMove.bind(this)
     this.onTouchEnd = this.onTouchEnd.bind(this)
+    this.onPullDownMove = this.onPullDownMove.bind(this)
+    this.onPullDownRefresh = this.onPullDownRefresh.bind(this)
+    this.onPullUpMove = this.onPullUpMove.bind(this)
     this.container = null
     this.state = {
       loaderState: STATS.init,
@@ -48,18 +51,14 @@ export default class ReactPullLoad extends Component {
   }
 
   componentDidMount() {
+    const {isBlockContainer, offsetScrollTop, downEnough, distanceBottom} = this.props
     this.defaultConfig = {
-      container: document.body,//findDOMNode(this),
-      offsetScrollTop: this.props.offsetScrollTop || ReactPullLoad.offsetScrollTop,
-      downEnough: this.props.downEnough || ReactPullLoad.downEnough,
-      distanceBottom: this.props.distanceBottom || ReactPullLoad.distanceBottom,
-      onPullDownMove: this.onPullDownMove.bind(this),
-      onPullDownRefresh: this.onPullDownRefresh.bind(this),
-      clearPullDownMove: this.clearPullDownMove.bind(this),
-      onPullStart: this.onPullStart.bind(this),
-      onPullUpMove: this.onPullUpMove.bind(this),
-      onPullUpLoad: this.onPullUpLoad.bind(this),
+      container: isBlockContainer ? findDOMNode(this) : document.body,
+      offsetScrollTop: offsetScrollTop,
+      downEnough: downEnough,
+      distanceBottom: distanceBottom
     };
+    console.info("downEnough = ", downEnough, this.defaultConfig.downEnough)
     addEvent(this.refs.container, "touchstart", this.onTouchStart)
     addEvent(this.refs.container, "touchmove", this.onTouchMove)
     addEvent(this.refs.container, "touchend", this.onTouchEnd)
@@ -114,7 +113,6 @@ export default class ReactPullLoad extends Component {
       })
       if (typeof this.props.onRefresh === "function") {
         this.props.onRefresh(() => {
-          console.info("STATS.refreshed")
           this.setState({
             pullHeight: 0,
             loaderState: STATS.refreshed
@@ -129,16 +127,6 @@ export default class ReactPullLoad extends Component {
     }
   }
 
-  clearPullDownMove() {
-    if (typeof this.props.clearPullDownMove === "function") {
-      this.props.clearPullDownMove();
-    }
-  }
-  onPullStart() {
-    if (typeof this.props.onPullStart === "function") {
-      this.props.onPullStart();
-    }
-  }
   onPullUpMove(data) {
     if(!this.canRefresh())return false;
     const { hasMore, onLoadMore} = this.props
@@ -148,13 +136,10 @@ export default class ReactPullLoad extends Component {
         loaderState: STATS.loading
       })
 
-      // console.info(this.state);
       onLoadMore(()=>{
         this.setState(endState)
       });
     }
-  }
-  onPullUpLoad() {
   }
 
   onTouchStart(event) {
@@ -167,28 +152,28 @@ export default class ReactPullLoad extends Component {
   onTouchMove(event) {
     let scrollTop = this.defaultConfig.container.scrollTop,
       scrollH = this.defaultConfig.container.scrollHeight,
-      con_H = document.documentElement.clientHeight,//this.defaultConfig.container.clientHeight,
+      conH = this.defaultConfig.container === document.body ? document.documentElement.clientHeight : this.defaultConfig.container.offsetHeight,
       targetEvent = event.changedTouches[0],
       curX = targetEvent.clientX,
       curY = targetEvent.clientY,
       diffX = curX - this.startX,
       diffY = curY - this.startY;
-    // console.info(diffY, (scrollH - scrollTop - con_H))
+
     //判断垂直移动距离是否大于5 && 横向移动距离小于纵向移动距离
     if (Math.abs(diffY) > 5 && Math.abs(diffY) > Math.abs(diffX)) {
       //滚动距离小于设定值 &&回调onPullDownMove 函数，并且回传位置值
       if (diffY > 5 && scrollTop < this.defaultConfig.offsetScrollTop) {
         //阻止执行浏览器默认动作
         event.preventDefault();
-        this.defaultConfig.onPullDownMove([{
+        this.onPullDownMove([{
           touchStartY: this.startY,
           touchMoveY: curY
         }]);
       } //滚动距离距离底部小于设定值
-      else if (diffY < 0 && (scrollH - scrollTop - con_H) < this.defaultConfig.distanceBottom) {
+      else if (diffY < 0 && (scrollH - scrollTop - conH) < this.defaultConfig.distanceBottom) {
         //阻止执行浏览器默认动作
         // event.preventDefault();
-        this.defaultConfig.onPullUpMove([{
+        this.onPullUpMove([{
           touchStartY: this.startY,
           touchMoveY: curY
         }]);
@@ -198,8 +183,6 @@ export default class ReactPullLoad extends Component {
 
   onTouchEnd(event) {
     let scrollTop = this.defaultConfig.container.scrollTop,
-      scrollH = this.defaultConfig.container.scrollHeight,
-      con_H = document.documentElement.clientHeight,//this.defaultConfig.container.clientHeight,
       targetEvent = event.changedTouches[0],
       curX = targetEvent.clientX,
       curY = targetEvent.clientY,
@@ -210,26 +193,23 @@ export default class ReactPullLoad extends Component {
     if (Math.abs(diffY) > 5 && Math.abs(diffY) > Math.abs(diffX)) {
       if (diffY > 5 && scrollTop < this.defaultConfig.offsetScrollTop) {
         //回调onPullDownRefresh 函数，即满足刷新条件
-        this.defaultConfig.onPullDownRefresh();
-      }
-      // else if(diffY < 0 && (scrollH - scrollTop - con_H) < this.defaultConfig.distanceBottom ){
-      //   //回调onPullUpLoad 函数，即满足刷新条件
-      //   this.defaultConfig.onPullUpLoad();
-      // }
-      else {
-        //回调clearPullDownMove 函数，取消刷新动作
-        this.defaultConfig.clearPullDownMove();
+        this.onPullDownRefresh();
       }
     }
   }
 
   render() {
-    let {
+    const {
         children,
         onRefresh,
         onLoadMore,
         hasMore,
         initializing,
+        className,
+        offsetScrollTop,
+        downEnough,
+        distanceBottom,
+        isBlockContainer,
         ...other
     } = this.props
 
@@ -246,10 +226,10 @@ export default class ReactPullLoad extends Component {
       transform: `translate3d(0, ${symbolTop}px, 0)`
     } : null;
 
-    const boxClassName = 'tloader state-' + loaderState;
+    const boxClassName = `${className} tloader state-${loaderState}`;
 
     return (
-      <div className={boxClassName} ref="container">
+      <div {...other} className={boxClassName} ref="container">
         <div className="tloader-symbol" style={msgStyle2}>
           <p className="tloader-msg"><i></i></p>
           <p className="tloader-loading">
@@ -273,11 +253,18 @@ export default class ReactPullLoad extends Component {
 ReactPullLoad.propTypes = {
   onRefresh: PropTypes.func.isRequired,
   onLoadMore: PropTypes.func,
-  hasMore: PropTypes.bool,
+  hasMore: PropTypes.bool,          //是否还有更多内容可加载
   offsetScrollTop: PropTypes.number,
-  downEnough: PropTypes.number,
-  distanceBottom: PropTypes.number
+  downEnough: PropTypes.number,     //下拉满足刷新的距离
+  distanceBottom: PropTypes.number, //距离底部距离触发加载更多
+  isBlockContainer: PropTypes.bool
 }
-ReactPullLoad.offsetScrollTop = 2  //与顶部的距离
-ReactPullLoad.downEnough = 100     //下拉满足刷新的距离
-ReactPullLoad.distanceBottom = 100 //距离底部距离触发加载更多
+//设置 props 默认值
+ReactPullLoad.defaultProps = {
+  hasMore: true,
+  offsetScrollTop: 1,
+  downEnough: 100,
+  distanceBottom: 100,
+  isBlockContainer: false,
+  className: ""
+};
