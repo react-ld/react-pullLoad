@@ -17,8 +17,9 @@
   },
   "keywords": [
     "react",
-    "frefresh",
-    "component"
+    "refresh",
+    "component",
+    "loadmore"
   ],
   "author": "lidianhao123",
   "license": "MIT",

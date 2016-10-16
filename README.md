@@ -86,3 +86,6 @@ export class App extends Component{
 | isBlockContainer | 是否开启使用组件根 DOM 作为外部容器 contianer | false |  |
 
 另外 ReactPullLoad 组件支持根属性扩展 例如： className\style 等等
+
+# License
+MIT
