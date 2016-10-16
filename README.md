@@ -56,14 +56,18 @@ export class App extends Component{
     const {data, hasMore} = this.state
     return (
       <div>
-        <ReactPullLoad downEnough={150} onRefresh={this.refresh.bind(this)} onLoadMore={this.loadMore.bind(this)} hasMore={hasMore}>
-          <ul className="test-ul">
-            {
-              data.map( (str, index )=>{
-                return <li key={index}><img src={str} alt=""/></li>
-              })
-            }
-          </ul>
+        <ReactPullLoad
+          downEnough={150} 
+          onRefresh={this.refresh.bind(this)} 
+          onLoadMore={this.loadMore.bind(this)} 
+          hasMore={hasMore}>
+            <ul className="test-ul">
+              {
+                data.map( (str, index )=>{
+                  return <li key={index}><img src={str} alt=""/></li>
+                })
+              }
+            </ul>
         </ReactPullLoad>
       </div>
     )
@@ -81,4 +85,4 @@ export class App extends Component{
 | distanceBottom | 距离底部距离触发加载更多 | 100 |  |
 | isBlockContainer | 是否开启使用组件根 DOM 作为外部容器 contianer | false |  |
 
-另外 ReactPullLoad 组件支持
+另外 ReactPullLoad 组件支持根属性扩展 例如： className\style 等等
