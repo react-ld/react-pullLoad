@@ -4,7 +4,8 @@
   [pullLoad](https://github.com/lidianhao123/pullLoad) 非 react 版本，支持 require.js 模块化调用
 
 #### 示例
-http://lidianhao123.github.io/pullLoad/
+[demo1](https://react-ld.github.io/react-pullLoad/index.html) document.body 作为容器
+[demo2](https://react-ld.github.io/react-pullLoad/index2.html) ReactPullLoad 根节点 DOM 作为容器
 
 # 简介
 1. 只依赖 react/react-dom
