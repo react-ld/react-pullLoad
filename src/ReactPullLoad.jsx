@@ -49,10 +49,10 @@ export default class ReactPullLoad extends Component {
 
   componentDidMount() {
     this.defaultConfig = {
-      container: document.body,//findDOMNode(this),        
-      offsetScrollTop: 2,
-      offsetY: 75,
-      distanceBottom: 100,
+      container: document.body,//findDOMNode(this),
+      offsetScrollTop: this.props.offsetScrollTop || ReactPullLoad.offsetScrollTop,
+      downEnough: this.props.downEnough || ReactPullLoad.downEnough,
+      distanceBottom: this.props.distanceBottom || ReactPullLoad.distanceBottom,
       onPullDownMove: this.onPullDownMove.bind(this),
       onPullDownRefresh: this.onPullDownRefresh.bind(this),
       clearPullDownMove: this.clearPullDownMove.bind(this),
@@ -91,7 +91,7 @@ export default class ReactPullLoad extends Component {
       diff = 0;
     }
     diff = this.easing(diff);
-    if (diff > 100) {
+    if (diff > this.defaultConfig.downEnough) {
       loaderState = STATS.enough
     } else {
       loaderState = STATS.pulling
@@ -273,6 +273,11 @@ export default class ReactPullLoad extends Component {
 ReactPullLoad.propTypes = {
   onRefresh: PropTypes.func.isRequired,
   onLoadMore: PropTypes.func,
-  hasMore: PropTypes.bool
-  // initializing: PropTypes.string
+  hasMore: PropTypes.bool,
+  offsetScrollTop: PropTypes.number,
+  downEnough: PropTypes.number,
+  distanceBottom: PropTypes.number
 }
+ReactPullLoad.offsetScrollTop = 2  //与顶部的距离
+ReactPullLoad.downEnough = 100     //下拉满足刷新的距离
+ReactPullLoad.distanceBottom = 100 //距离底部距离触发加载更多
