@@ -25,6 +25,9 @@ npm install --save react-pullload
 ```
 
 ```js
+import ReactPullLoad from 'react-pullload'
+
+
 export class App extends Component{
   constructor(){
     super();
