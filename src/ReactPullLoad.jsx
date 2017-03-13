@@ -1,17 +1,11 @@
+
 import React, { Component, PropTypes } from 'react'
 import { findDOMNode } from 'react-dom'
+import { STATS } from 'constants'
+import HeadNode from './HeadNode'
+import FooterNode from './FooterNode'
 import './ReactPullLoad.less'
 
-const STATS = {
-  init: '',
-  pulling: 'pulling',
-  enough: 'pulling enough',
-  refreshing: 'refreshing',
-  refreshed: 'refreshed',
-  reset: 'reset',
-
-  loading: 'loading' // loading more
-};
 const endState = {
   loaderState: STATS.reset,
   pullHeight: 0
@@ -34,21 +28,36 @@ function removeEvent(obj, type, fn) {
 }
 
 export default class ReactPullLoad extends Component {
+  static propTypes = {
+    onRefresh: PropTypes.func.isRequired,
+    onLoadMore: PropTypes.func,
+    hasMore: PropTypes.bool,          //是否还有更多内容可加载
+    offsetScrollTop: PropTypes.number,
+    downEnough: PropTypes.number,     //下拉满足刷新的距离
+    distanceBottom: PropTypes.number, //距离底部距离触发加载更多
+    isBlockContainer: PropTypes.bool,
 
-  constructor(props) {
-    super(props)
-    this.onTouchStart = this.onTouchStart.bind(this)
-    this.onTouchMove = this.onTouchMove.bind(this)
-    this.onTouchEnd = this.onTouchEnd.bind(this)
-    this.onPullDownMove = this.onPullDownMove.bind(this)
-    this.onPullDownRefresh = this.onPullDownRefresh.bind(this)
-    this.onPullUpMove = this.onPullUpMove.bind(this)
-    this.container = null
-    this.state = {
-      loaderState: STATS.init,
-      pullHeight: 0
-    };
-  }
+    HeadNode: PropTypes.any,     //refresh message react dom
+    FooterNode: PropTypes.any, //refresh loading react dom
+  };
+  //set props default values
+  static defaultProps = {
+    hasMore: true,
+    offsetScrollTop: 1,
+    downEnough: 100,
+    distanceBottom: 100,
+    isBlockContainer: false,
+    className: "",
+    HeadNode: HeadNode,     //refresh message react dom
+    FooterNode: FooterNode, //refresh loading react dom
+  };
+
+  state = {
+    loaderState: STATS.init,
+    pullHeight: 0
+  };
+
+  container = null;
 
   componentDidMount() {
     const {isBlockContainer, offsetScrollTop, downEnough, distanceBottom} = this.props
@@ -59,6 +68,10 @@ export default class ReactPullLoad extends Component {
       distanceBottom: distanceBottom
     };
     console.info("downEnough = ", downEnough, this.defaultConfig.downEnough)
+    /*
+      As below reason handle touch event self ( widthout react defualt touch)
+      Unable to preventDefault inside passive event listener due to target being treated as passive. See https://www.chromestatus.com/features/5093566007214080
+    */
     addEvent(this.refs.container, "touchstart", this.onTouchStart)
     addEvent(this.refs.container, "touchmove", this.onTouchMove)
     addEvent(this.refs.container, "touchend", this.onTouchEnd)
@@ -68,8 +81,29 @@ export default class ReactPullLoad extends Component {
     removeEvent(this.refs.container, "touchmove", this.onTouchMove)
     removeEvent(this.refs.container, "touchend", this.onTouchEnd)
   }
+
+  componentWillReceiveProps(nextProps) {
+    if(this.props.action !== nextProps.action &&
+      [STATS.refreshing, STATS.loading].indexOf(nextProps.action) > -1){
+      this.setState({
+        loaderState: nextProps.action
+      })
+      this.props.onRefresh(() => {
+        this.setState({
+          pullHeight: 0,
+          loaderState: STATS.refreshed
+        })
+        setTimeout(()=>{
+          this.setState(endState)
+        },1000)
+      }, () => {
+        this.setState(endState)
+      })
+    }
+  }
+
   // 拖拽的缓动公式 - easeOutSine
-  easing(distance) {
+  easing = (distance) => {
     // t: current time, b: begInnIng value, c: change In value, d: duration
     var t = distance;
     var b = 0;
@@ -78,11 +112,12 @@ export default class ReactPullLoad extends Component {
 
     return c * Math.sin(t / d * (Math.PI / 2)) + b;
   }
-  canRefresh() {
+  
+  canRefresh = () => {
     return this.props.onRefresh && [STATS.refreshing, STATS.loading].indexOf(this.state.loaderState) < 0;
   }
 
-  onPullDownMove(data) {
+  onPullDownMove = (data)  => {
     if(!this.canRefresh())return false;
 
     let loaderState, diff = data[0].touchMoveY - data[0].touchStartY;
@@ -101,7 +136,7 @@ export default class ReactPullLoad extends Component {
     })
   }
 
-  onPullDownRefresh() {
+  onPullDownRefresh = () => {
     if(!this.canRefresh())return false;
 
     if (this.state.loaderState === STATS.pulling) {
@@ -127,7 +162,7 @@ export default class ReactPullLoad extends Component {
     }
   }
 
-  onPullUpMove(data) {
+  onPullUpMove = (data) => {
     if(!this.canRefresh())return false;
     const { hasMore, onLoadMore} = this.props
     if (typeof this.props.onLoadMore === "function" && hasMore) {
@@ -142,14 +177,17 @@ export default class ReactPullLoad extends Component {
     }
   }
 
-  onTouchStart(event) {
+  onTouchStart = (event) => {
     console.info("onTouchStart")
     var targetEvent = event.changedTouches[0];
     this.startX = targetEvent.clientX;
     this.startY = targetEvent.clientY;
+    // if([STATS.refreshing, STATS.loading].indexOf(this.state.loaderState) > 0){
+    //   event.preventDefault();
+    // }
   }
 
-  onTouchMove(event) {
+  onTouchMove = (event) => {
     let scrollTop = this.defaultConfig.container.scrollTop,
       scrollH = this.defaultConfig.container.scrollHeight,
       conH = this.defaultConfig.container === document.body ? document.documentElement.clientHeight : this.defaultConfig.container.offsetHeight,
@@ -181,7 +219,7 @@ export default class ReactPullLoad extends Component {
     }
   }
 
-  onTouchEnd(event) {
+  onTouchEnd = (event) => {
     let scrollTop = this.defaultConfig.container.scrollTop,
       targetEvent = event.changedTouches[0],
       curX = targetEvent.clientX,
@@ -203,6 +241,7 @@ export default class ReactPullLoad extends Component {
         children,
         onRefresh,
         onLoadMore,
+        action,
         hasMore,
         initializing,
         className,
@@ -210,6 +249,8 @@ export default class ReactPullLoad extends Component {
         downEnough,
         distanceBottom,
         isBlockContainer,
+        HeadNode,
+        FooterNode,
         ...other
     } = this.props
 
@@ -220,51 +261,22 @@ export default class ReactPullLoad extends Component {
       transform: `translate3d(0, ${pullHeight}px, 0)`
     } : null;
 
-    const symbolTop = pullHeight - 50 > 0 ? pullHeight - 50 : 0;
-    const msgStyle2 = pullHeight ? {
-      WebkitTransform: `translate3d(0, ${symbolTop}px, 0)`,
-      transform: `translate3d(0, ${symbolTop}px, 0)`
-    } : null;
-
-    const boxClassName = `${className} tloader state-${loaderState}`;
+    const boxClassName = `${className} pull-load state-${loaderState}`;
 
     return (
-      <div {...other} className={boxClassName} ref="container">
-        <div className="tloader-symbol" style={msgStyle2}>
-          <p className="tloader-msg"><i></i></p>
-          <p className="tloader-loading">
-            <i className="ui-loading"></i>
-          </p>
-        </div>
-        <div className="tloader-body" style={msgStyle}>
-          {children}
-        </div>
-        <div className="tloader-footer">
-          { !hasMore ? <p className="tloader-btn"></p> : null}
-          <p className="tloader-loading">
-            <i className="ui-loading"></i>
-          </p>
+      <div {...other}
+        className={boxClassName}
+        ref="container">
+        <div className="pull-load-body" style={msgStyle}>
+          <div className="pull-load-head">
+            <HeadNode loaderState={loaderState}/>
+          </div>
+          { children }
+          <div className="pull-load-footer">
+            <FooterNode loaderState={loaderState} hasMore={hasMore}/>
+          </div>
         </div>
       </div>
     )
   }
 }
-
-ReactPullLoad.propTypes = {
-  onRefresh: PropTypes.func.isRequired,
-  onLoadMore: PropTypes.func,
-  hasMore: PropTypes.bool,          //是否还有更多内容可加载
-  offsetScrollTop: PropTypes.number,
-  downEnough: PropTypes.number,     //下拉满足刷新的距离
-  distanceBottom: PropTypes.number, //距离底部距离触发加载更多
-  isBlockContainer: PropTypes.bool
-}
-//设置 props 默认值
-ReactPullLoad.defaultProps = {
-  hasMore: true,
-  offsetScrollTop: 1,
-  downEnough: 100,
-  distanceBottom: 100,
-  isBlockContainer: false,
-  className: ""
-};

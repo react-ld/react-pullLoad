@@ -2,4 +2,4 @@ html,body{margin: 0; padding: 0;}
 li{font-size: 20px; width: 100%;list-style: none;}
 img{width: 100%;}
 div, .test-ul, p{margin: 0; padding: 0;}
-.block{position: relative; top: 100px; height: 500px; overflow-y: scroll; -webkit-overflow-scrolling: touch;}
+.block{position: absolute; height: 100%; overflow-y: scroll; -webkit-overflow-scrolling: touch;}
