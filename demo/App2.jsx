@@ -168,19 +168,36 @@ export class App extends Component{
   
   render(){
     const {
-      data,
+      data, 
       hasMore
     } = this.state
 
+    const fixHeaderStyle = {
+      position: "fixed",
+      width: "100%",
+      height: "50px",
+      color: "#fff",
+      lineHeight: "50px",
+      backgroundColor: "#e24f37",
+      left: 0,
+      top: 0,
+      textAlign: "center",
+      zIndex: 1
+    }
+
     return (
       <div>
+        <div style={fixHeaderStyle}>
+          fixed header    
+        </div>
         <ReactPullLoad 
-          className="block"
-          isBlockContainer={true}
-          downEnough={150}
+          downEnough={100}
           action={this.state.action}
           handleAction={this.handleAction}
           hasMore={hasMore}
+          HeadNode={HeadNode}
+          FooterNode={FooterNode}
+          style={{paddingTop: 50}}
           distanceBottom={1000}>
           <ul className="test-ul">
             <button onClick={this.handRefreshing}>refreshing</button>

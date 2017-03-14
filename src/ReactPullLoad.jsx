@@ -29,10 +29,10 @@ function removeEvent(obj, type, fn) {
 
 export default class ReactPullLoad extends Component {
   static propTypes = {
-    onRefresh: PropTypes.func.isRequired,
-    onLoadMore: PropTypes.func,
+    action: PropTypes.string.isRequired,     //用于同步状态
+    handleAction: PropTypes.func.isRequired, //用于处理状态
     hasMore: PropTypes.bool,          //是否还有更多内容可加载
-    offsetScrollTop: PropTypes.number,
+    offsetScrollTop: PropTypes.number,//必须大于零，使触发刷新往下偏移，隐藏部分顶部内容
     downEnough: PropTypes.number,     //下拉满足刷新的距离
     distanceBottom: PropTypes.number, //距离底部距离触发加载更多
     isBlockContainer: PropTypes.bool,
@@ -53,7 +53,6 @@ export default class ReactPullLoad extends Component {
   };
 
   state = {
-    loaderState: STATS.init,
     pullHeight: 0
   };
 
@@ -67,7 +66,7 @@ export default class ReactPullLoad extends Component {
       downEnough: downEnough,
       distanceBottom: distanceBottom
     };
-    console.info("downEnough = ", downEnough, this.defaultConfig.downEnough)
+    // console.info("downEnough = ", downEnough, this.defaultConfig.downEnough)
     /*
       As below reason handle touch event self ( widthout react defualt touch)
       Unable to preventDefault inside passive event listener due to target being treated as passive. See https://www.chromestatus.com/features/5093566007214080
@@ -76,6 +75,16 @@ export default class ReactPullLoad extends Component {
     addEvent(this.refs.container, "touchmove", this.onTouchMove)
     addEvent(this.refs.container, "touchend", this.onTouchEnd)
   }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if(this.props.action === nextProps.action && this.state.pullHeight === nextState.pullHeight){
+      //console.info("[ReactPullLoad] info new action is equal to old action",this.state.pullHeight,nextState.pullHeight);
+      return false
+    } else{
+      return true
+    }
+  }
+
   componentWillUnmount() {
     removeEvent(this.refs.container, "touchstart", this.onTouchStart)
     removeEvent(this.refs.container, "touchmove", this.onTouchMove)
@@ -83,22 +92,10 @@ export default class ReactPullLoad extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if(this.props.action !== nextProps.action &&
-      [STATS.refreshing, STATS.loading].indexOf(nextProps.action) > -1){
-      this.setState({
-        loaderState: nextProps.action
-      })
-      this.props.onRefresh(() => {
-        this.setState({
-          pullHeight: 0,
-          loaderState: STATS.refreshed
-        })
-        setTimeout(()=>{
-          this.setState(endState)
-        },1000)
-      }, () => {
-        this.setState(endState)
-      })
+    if(nextProps.action === STATS.refreshed){
+      setTimeout(()=>{
+        this.props.handleAction(STATS.reset)
+      },1000)
     }
   }
 
@@ -114,7 +111,7 @@ export default class ReactPullLoad extends Component {
   }
   
   canRefresh = () => {
-    return this.props.onRefresh && [STATS.refreshing, STATS.loading].indexOf(this.state.loaderState) < 0;
+    return [STATS.refreshing, STATS.loading].indexOf(this.props.action) < 0;
   }
 
   onPullDownMove = (data)  => {
@@ -132,59 +129,40 @@ export default class ReactPullLoad extends Component {
     }
     this.setState({
       pullHeight: diff,
-      loaderState: loaderState
     })
+    this.props.handleAction(loaderState)
   }
 
   onPullDownRefresh = () => {
     if(!this.canRefresh())return false;
 
-    if (this.state.loaderState === STATS.pulling) {
-      this.setState(endState)
+    if (this.props.action === STATS.pulling) {
+      this.setState({pullHeight: 0})
+      this.props.handleAction(STATS.reset)
     } else {
       this.setState({
         pullHeight: 0,
-        loaderState: STATS.refreshing
       })
-      if (typeof this.props.onRefresh === "function") {
-        this.props.onRefresh(() => {
-          this.setState({
-            pullHeight: 0,
-            loaderState: STATS.refreshed
-          })
-          setTimeout(()=>{
-            this.setState(endState)
-          },1000)
-        }, () => {
-          this.setState(endState)
-        })
-      }
+      this.props.handleAction(STATS.refreshing)
     }
   }
 
   onPullUpMove = (data) => {
     if(!this.canRefresh())return false;
+
     const { hasMore, onLoadMore} = this.props
-    if (typeof this.props.onLoadMore === "function" && hasMore) {
+    if (hasMore) {
       this.setState({
         pullHeight: 0,
-        loaderState: STATS.loading
       })
-
-      onLoadMore(()=>{
-        this.setState(endState)
-      });
+      this.props.handleAction(STATS.loading)
     }
   }
 
   onTouchStart = (event) => {
-    console.info("onTouchStart")
     var targetEvent = event.changedTouches[0];
     this.startX = targetEvent.clientX;
     this.startY = targetEvent.clientY;
-    // if([STATS.refreshing, STATS.loading].indexOf(this.state.loaderState) > 0){
-    //   event.preventDefault();
-    // }
   }
 
   onTouchMove = (event) => {
@@ -239,11 +217,9 @@ export default class ReactPullLoad extends Component {
   render() {
     const {
         children,
-        onRefresh,
-        onLoadMore,
         action,
+        handleAction,
         hasMore,
-        initializing,
         className,
         offsetScrollTop,
         downEnough,
@@ -254,14 +230,14 @@ export default class ReactPullLoad extends Component {
         ...other
     } = this.props
 
-    const {pullHeight, loaderState} = this.state
+    const { pullHeight } = this.state
 
     const msgStyle = pullHeight ? {
       WebkitTransform: `translate3d(0, ${pullHeight}px, 0)`,
       transform: `translate3d(0, ${pullHeight}px, 0)`
     } : null;
 
-    const boxClassName = `${className} pull-load state-${loaderState}`;
+    const boxClassName = `${className} pull-load state-${action}`;
 
     return (
       <div {...other}
@@ -269,11 +245,11 @@ export default class ReactPullLoad extends Component {
         ref="container">
         <div className="pull-load-body" style={msgStyle}>
           <div className="pull-load-head">
-            <HeadNode loaderState={loaderState}/>
+            <HeadNode loaderState={action}/>
           </div>
           { children }
           <div className="pull-load-footer">
-            <FooterNode loaderState={loaderState} hasMore={hasMore}/>
+            <FooterNode loaderState={action} hasMore={hasMore}/>
           </div>
         </div>
       </div>

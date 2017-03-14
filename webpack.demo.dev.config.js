@@ -7,7 +7,7 @@ module.exports = {
     context: path.resolve('demo'),
     entry: [
         'babel-polyfill',
-        './App1.jsx'
+        './App2.jsx'
     ],
     plugins: [
         new webpack.DefinePlugin({ 

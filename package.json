@@ -1,8 +1,8 @@
 {
   "name": "react-pullload",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "description": "React compopnent pull down refresh and pull up load more",
-  "main": "./lib/ReactPullLoad.js",
+  "main": "./lib/index.js",
   "scripts": {
     "start": "webpack-dev-server --hot --config webpack.demo.dev.config.js",
     "build": "node_modules/babel-cli/bin/babel.js  src --out-dir lib && cp src/*.less lib/",

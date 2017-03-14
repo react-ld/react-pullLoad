@@ -7,7 +7,8 @@ module.exports = {
     context: path.resolve('demo'),
     entry: {
         bundle1: ['babel-polyfill','./App.jsx',],
-        bundle2: ['babel-polyfill','./App1.jsx',]
+        bundle2: ['babel-polyfill','./App1.jsx',],
+        bundle3: ['babel-polyfill','./App2.jsx',]
     },
     output: {
         path: path.resolve(dist),
