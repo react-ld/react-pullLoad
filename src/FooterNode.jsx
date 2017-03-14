@@ -1,6 +1,6 @@
 
 import React, { PureComponent, PropTypes } from 'react'
-import { STATS } from 'constants'
+import { STATS } from './constants'
 
 export default class FooterNode extends PureComponent{
 

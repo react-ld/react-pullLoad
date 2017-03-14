@@ -1,7 +1,7 @@
 
 import React, { Component, PropTypes } from 'react'
 import { findDOMNode } from 'react-dom'
-import { STATS } from 'constants'
+import { STATS } from './constants'
 import HeadNode from './HeadNode'
 import FooterNode from './FooterNode'
 import './ReactPullLoad.less'
