@@ -6,11 +6,6 @@ import HeadNode from './HeadNode'
 import FooterNode from './FooterNode'
 import './ReactPullLoad.less'
 
-const endState = {
-  loaderState: STATS.reset,
-  pullHeight: 0
-};
-
 function addEvent(obj, type, fn) {
   if (obj.attachEvent) {
     obj['e' + type + fn] = fn;
@@ -56,7 +51,7 @@ export default class ReactPullLoad extends Component {
     pullHeight: 0
   };
 
-  container = null;
+  // container = null;
 
   componentDidMount() {
     const {isBlockContainer, offsetScrollTop, downEnough, distanceBottom} = this.props
@@ -151,13 +146,13 @@ export default class ReactPullLoad extends Component {
   onPullUpMove = (data) => {
     if(!this.canRefresh())return false;
 
-    const { hasMore, onLoadMore} = this.props
-    if (hasMore) {
-      this.setState({
-        pullHeight: 0,
-      })
-      this.props.handleAction(STATS.loading)
-    }
+    // const { hasMore, onLoadMore} = this.props
+    // if (this.props.hasMore) {
+    this.setState({
+      pullHeight: 0,
+    })
+    this.props.handleAction(STATS.loading)
+    // }
   }
 
   onTouchStart = (event) => {
