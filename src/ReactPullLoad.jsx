@@ -76,14 +76,15 @@ export default class ReactPullLoad extends Component {
     addEvent(this.refs.container, "touchend", this.onTouchEnd)
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    if(this.props.action === nextProps.action && this.state.pullHeight === nextState.pullHeight){
-      //console.info("[ReactPullLoad] info new action is equal to old action",this.state.pullHeight,nextState.pullHeight);
-      return false
-    } else{
-      return true
-    }
-  }
+  // 未考虑到 children 及其他 props 改变的情况
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   if(this.props.action === nextProps.action && this.state.pullHeight === nextState.pullHeight){
+  //     //console.info("[ReactPullLoad] info new action is equal to old action",this.state.pullHeight,nextState.pullHeight);
+  //     return false
+  //   } else{
+  //     return true
+  //   }
+  // }
 
   componentWillUnmount() {
     removeEvent(this.refs.container, "touchstart", this.onTouchStart)
