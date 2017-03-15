@@ -12,73 +12,6 @@ const defaultStyle ={
   lineHeight: "1.5"
 }
 
-class HeadNode extends PureComponent{
-
-  static propTypes = {
-    loaderState: PropTypes.string.isRequired,
-  };
-
-  static defaultProps = {
-    loaderState: STATS.init,
-  };
-
-  render(){
-    const {
-      loaderState
-    } = this.props
-
-    let content = ""
-    if(loaderState == STATS.pulling){
-      content = "下拉刷新"
-    } else if(loaderState == STATS.enough){
-      content = "松开刷新"
-    } else if(loaderState == STATS.refreshing){
-      content = "正在刷新..."
-    } else if(loaderState == STATS.refreshed){
-      content = "刷新成功"
-    }
-
-    return(
-      <div style={defaultStyle}>
-        {content}
-      </div>
-    )
-  }
-}
-
-class FooterNode extends PureComponent{
-
-  static propTypes = {
-    loaderState: PropTypes.string.isRequired,
-    hasMore: PropTypes.bool.isRequired
-  };
-
-  static defaultProps = {
-    loaderState: STATS.init,
-    hasMore: true
-  };
-
-  render(){
-    const {
-      loaderState,
-      hasMore
-    } = this.props
-
-    let content = ""
-    if(hasMore === false){
-      content = "没有更多"
-    } else if(loaderState == STATS.loading && hasMore === true){
-      content = "加载中"
-    } 
-
-    return(
-      <div style={defaultStyle}>
-        {content}
-      </div>
-    )
-  }
-}
-
 const loadMoreLimitNum = 2;
 
 const cData = [
@@ -105,64 +38,43 @@ export class App extends Component{
   handleAction = (action) => {
     console.info(action, this.state.action,action === this.state.action);
     //new action must do not equel to old action
-    if(action === this.state.action){
+    if(action === this.state.action ||
+       action === STATS.refreshing && this.state.action === STATS.loading ||
+       action === STATS.loading && this.state.action === STATS.refreshing){
+      console.info("It's same action or on loading or on refreshing ",action, this.state.action,action === this.state.action);
       return false
     }
 
     if(action === STATS.refreshing){//刷新
-      this.handRefreshing();
+      setTimeout(()=>{
+        //refreshing complete
+        this.setState({
+          data: cData,
+          hasMore: true,
+          action: STATS.refreshed,
+          index: loadMoreLimitNum
+        });
+      }, 3000)
     } else if(action === STATS.loading){//加载更多
-      this.handLoadMore();
-    } else{
-      //DO NOT modify below code
-      this.setState({
-        action: action
-      })
+      setTimeout(()=>{
+        if(this.state.index === 0){
+          this.setState({
+            action: STATS.reset,
+            hasMore: false
+          });
+        } else{
+          this.setState({
+            data: [...this.state.data, cData[0], cData[0]],
+            action: STATS.reset,
+            index: this.state.index - 1
+          });
+        }
+      }, 3000)
     }
-  }
 
-  handRefreshing = () =>{
-    if(STATS.refreshing === this.state.action){
-      return false
-    }
-
-    setTimeout(()=>{
-      //refreshing complete
-      this.setState({
-        data: cData,
-        hasMore: true,
-        action: STATS.refreshed,
-        index: loadMoreLimitNum
-      });
-    }, 3000)
-
+    //DO NOT modify below code
     this.setState({
-      action: STATS.refreshing
-    })
-  }
-
-  handLoadMore = () => {
-    if(STATS.loading === this.state.action){
-      return false
-    }
-
-    setTimeout(()=>{
-      if(this.state.index === 0){
-        this.setState({
-          action: STATS.reset,
-          hasMore: false
-        });
-      } else{
-        this.setState({
-          data: [...this.state.data, cData[0], cData[0]],
-          action: STATS.reset,
-          index: this.state.index - 1
-        });
-      }
-    }, 3000)
-
-    this.setState({
-      action: STATS.loading
+      action: action
     })
   }
   
@@ -198,8 +110,8 @@ export class App extends Component{
           style={{paddingTop: 50}}
           distanceBottom={1000}>
           <ul className="test-ul">
-            <button onClick={this.handRefreshing}>refreshing</button>
-            <button onClick={this.handLoadMore}>loading more</button>
+            <button onClick={this.handleAction.bind(this, STATS.refreshing)}>refreshing</button>
+            <button onClick={this.handleAction.bind(this, STATS.loading)}>loading more</button>
             {
               data.map( (str, index )=>{
                 return <li key={index}><img src={str} alt=""/></li>
