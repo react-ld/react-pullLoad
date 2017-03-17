@@ -1,30 +1,35 @@
-# [中文](./README-cn.md)
+# [English](./README.md)
 
 # [react-pullLoad](https://github.com/react-ld/react-pullLoad)
-  Refreshing and Loading more component for react.
+  React 版本的 [pullLoad](https://github.com/lidianhao123/pullLoad) 下拉更新 上拉加载更多 组件
 
-  [pullLoad](https://github.com/lidianhao123/pullLoad) is another refreshing and loading more lib without react, support require.js to load lib.
+  [pullLoad](https://github.com/lidianhao123/pullLoad) 非 react 版本，支持 require.js 模块化调用
 
-#### examples
-[demo1](https://react-ld.github.io/react-pullLoad/index.html) use document.body as container
+#### 示例
+[demo1](https://react-ld.github.io/react-pullLoad/index.html) document.body 作为容器
 
-[demo2](https://react-ld.github.io/react-pullLoad/index2.html) use ReactPullLoad root DOM as container
+[demo2](https://react-ld.github.io/react-pullLoad/index2.html) ReactPullLoad 根节点 DOM 作为容器
 
-[demo3](https://react-ld.github.io/react-pullLoad/index3.html) use document.body as container, and config UI component (HeadNode and FooterNode).
+[demo3](https://react-ld.github.io/react-pullLoad/index3.html) document.body 作为容器 且自定义刷新和加载更多 UI 组件
 
-# version 1.0.4
+# 当前版本 1.0.4
 
-# Description
-1. Only depend on react/react-dom, without any other package.
-2. Use less.
-3. Support body or root Dom as container.
-4. Bind touch event on component root Dom.
-5. It.s develop as Pure react component.
-6. Support config UI component (HeadNode and FooterNode).
-7. Can apply refreshing or loading through modify STATE.
-8. **Only support mobile device**
+# 简介
+1. 只依赖 react/react-dom
+2. 样式使用 less 编写
+3. 支持 body 或者组件根 DOM 固定高度作为外部容器 contianer（即可视区域大小）
+4. 触摸事件绑定在内容块 content（即高度为 auto 的DOM ）
+5. 纯 React 组件方式开发的
+6. 支持自定义刷新和加载更多 UI 组件
+7. 支持代码动态调起刷新和加载更多（组件将展示刷新和加载更多样式）
+8. **只支持移动触摸设备**
 
-# How to use
+# 功能点
+1. 下拉距离大于阈值触发刷新动作
+2. 滚动到距底部距离小于阈值加载更多
+3. 支持自定义刷新和加载更多 UI 组件
+
+# 使用说明
 
 ```sh
 npm install --save react-pullload
@@ -51,9 +56,9 @@ export class App extends Component{
       return false
     }
 
-    if(action === STATS.refreshing){
+    if(action === STATS.refreshing){//刷新
       this.handRefreshing();
-    } else if(action === STATS.loading){
+    } else if(action === STATS.loading){//加载更多
       this.handLoadMore();
     } else{
       //DO NOT modify below code
@@ -155,32 +160,32 @@ export class App extends Component{
 }
 ```
 
-# API：
-| Property | Description | Type | default | Remarks |
+# 参数说明：
+| 参数 | 说明 | 类型 | 默认值 | 备注 |
 | --- | --- | --- | --- | --- |
-| action | sync component status | string | | isRequired |
-| handleAction | handle status | func | | isRequired |
-| hasMore | flag for are there any more content to load | bool |false | |
-| downEnough | how long distance is enough to refreshing | num | 100 | use px as unit |
-| distanceBottom | current position is apart from bottom | num | 100 | use px as unit |
-| isBlockContainer | set root dom as container | bool | false |  |
-| HeadNode | custom header UI compoent | any | [ReactPullLoad HeadNode](./src/HeadNode.jsx) | must be a react component |
-| FooterNode | custom footer UI compoent | any | [ReactPullLoad FooterNode](./src/FooterNode.jsx) | must be a react component |
+| action | 用于同步状态 | string | | isRequired |
+| handleAction | 用于处理状态 | func | | isRequired |
+| hasMore | 是否还有更多内容可加载 | bool |false | |
+| downEnough | 下拉距离是否满足要求 | num | 100 | |
+| distanceBottom | 距离底部距离触发加载更多 | num | 100 |  |
+| isBlockContainer | 是否开启使用组件根 DOM 作为外部容器 contianer | bool | false |  |
+| HeadNode | 自定义顶部刷新 UI 组件 | any | [ReactPullLoad HeadNode](./src/HeadNode.jsx) | 必须是一个 React 组件 |
+| FooterNode | 自定义底部加载更多 UI 组件 | any | [ReactPullLoad FooterNode](./src/FooterNode.jsx) | 必须是一个 React 组件 |
 
-Remarks: ReactPullLoad support set root dom className and style.
+另外 ReactPullLoad 组件支持根属性扩展 例如： className\style 等等
 
 
 # STATS list
 
-| Property | Value | root className | explain |
+| 属性 | 值 | 根节点 className | 说明 |
 | --- | --- | --- | --- |
-| init | '' | | component initial status |
-| pulling | 'pulling' | state-pulling | pull status |
-| enough | 'pulling enough' | state-pulling.enough| pull down enough status |
-| refreshing | 'refreshing' | state-refreshing| refreshing status fetch data |
-| refreshed | 'refreshed' | state-refreshed| refreshed |
-| reset | 'reset' | state-reset| reset status |
-| loading | 'loading' | state-loading | fetching data |
+| init | '' | | 组件初始状态 |
+| pulling | 'pulling' | state-pulling | 下拉状态 |
+| enough | 'pulling enough' | state-pulling.enough| 下拉并且已经满足阈值 |
+| refreshing | 'refreshing' | state-refreshing| 刷新中（加载数据中） |
+| refreshed | 'refreshed' | state-refreshed| 完成刷新动作 |
+| reset | 'reset' | state-reset| 恢复默认状态 |
+| loading | 'loading' | state-loading | 加载中 |
 
 init/reset -> pulling -> enough -> refreshing -> refreshed -> reset
 
@@ -188,15 +193,15 @@ init/reset -> pulling -> reset
 
 init/reset -> loading -> reset
 
-# Custom UI components
+# 自定义刷新及加载组件
 
-Please refer to the default HeadNode and FooterNode components
+请参考默认刷新及加载组件源码（通过 css 根节点不同 className 设置对应 UI 样式来实现）
 
 [ReactPullLoad HeadNode](./src/HeadNode.jsx)
 
 [ReactPullLoad FooterNode](./src/FooterNode.jsx)
 
-Or refer to demo3, show different dom style through compare props loaderState width STATS.
+或参考 demo3 中的实现方式在组件内容通过获取的 loaderState 与 STATS 不同状态对比来现实
 
 [demo3](https://react-ld.github.io/react-pullLoad/index3.html) 
 
