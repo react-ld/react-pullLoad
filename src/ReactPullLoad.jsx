@@ -105,9 +105,9 @@ export default class ReactPullLoad extends Component {
 
   setScrollTop = (value)=>{
     if(this.defaultConfig.container){
-      let conH = this.defaultConfig.container === document.body ? document.documentElement.clientHeight : this.defaultConfig.container.offsetHeight
+      let scrollH = this.defaultConfig.container.scrollHeight;
       if(value < 0){ value = 0}
-      if(value > conH){ value = conH}
+      if(value > scrollH){ value = scrollH}
       return this.defaultConfig.container.scrollTop = value;
     } else{
       return 0;
