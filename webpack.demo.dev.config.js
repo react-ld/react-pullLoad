@@ -1,13 +1,13 @@
 var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var path = require('path');
-var devport = 3002;
+var devport = 3003;
 
 module.exports = {
     context: path.resolve('demo'),
     entry: [
         'babel-polyfill',
-        './App2.jsx'
+        './App.jsx'
     ],
     plugins: [
         new webpack.DefinePlugin({ 

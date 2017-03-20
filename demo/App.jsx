@@ -77,6 +77,17 @@ export class App extends Component{
       action: action
     })
   }
+
+  getScrollTop = ()=>{
+    if(this.refs.reactpullload){
+      console.info(this.refs.reactpullload.getScrollTop());
+    }
+  }
+  setScrollTop = ()=>{
+    if(this.refs.reactpullload){
+      console.info(this.refs.reactpullload.setScrollTop(100));
+    }
+  }
   
   render(){
     const {
@@ -97,6 +108,12 @@ export class App extends Component{
       zIndex: 1
     }
 
+    const fixButtonStyle = {
+      position: "fixed",
+      top: 200,
+      width: "100%",
+    }
+
     return (
       <div>
         <div style={fixHeaderStyle}>
@@ -104,6 +121,9 @@ export class App extends Component{
         </div>
         <ReactPullLoad 
           downEnough={150}
+          ref="reactpullload"
+          className="block"
+          isBlockContainer={true}
           action={this.state.action}
           handleAction={this.handleAction}
           hasMore={hasMore}
@@ -112,6 +132,10 @@ export class App extends Component{
           <ul className="test-ul">
             <button onClick={this.handleAction.bind(this, STATS.refreshing)}>refreshing</button>
             <button onClick={this.handleAction.bind(this, STATS.loading)}>loading more</button>
+            <div style={fixButtonStyle}>
+              <button onClick={this.getScrollTop}>getScrollTop</button>
+              <button onClick={this.setScrollTop}>setScrollTop</button>
+            </div>
             {
               data.map( (str, index )=>{
                 return <li key={index}><img src={str} alt=""/></li>

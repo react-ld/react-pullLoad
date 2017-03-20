@@ -95,6 +95,25 @@ export default class ReactPullLoad extends Component {
     }
   }
 
+  getScrollTop = ()=>{
+    if(this.defaultConfig.container){
+      return this.defaultConfig.container.scrollTop;
+    } else{
+      return 0;
+    }
+  }
+
+  setScrollTop = (value)=>{
+    if(this.defaultConfig.container){
+      let conH = this.defaultConfig.container === document.body ? document.documentElement.clientHeight : this.defaultConfig.container.offsetHeight
+      if(value < 0){ value = 0}
+      if(value > conH){ value = conH}
+      return this.defaultConfig.container.scrollTop = value;
+    } else{
+      return 0;
+    }
+  }
+
   // 拖拽的缓动公式 - easeOutSine
   easing = (distance) => {
     // t: current time, b: begInnIng value, c: change In value, d: duration
