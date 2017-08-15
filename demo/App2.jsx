@@ -126,7 +126,7 @@ export class App extends Component{
           index: loadMoreLimitNum
         });
       }, 3000)
-    } else if(action === STATS.loading){//加载更多
+    } else if(action === STATS.loading && this.state.hasMore){//加载更多
       setTimeout(()=>{
         if(this.state.index === 0){
           this.setState({
@@ -143,6 +143,10 @@ export class App extends Component{
       }, 3000)
     }
 
+    //无更多内容，不再加载数据
+    if(action === STATS.loading && !this.state.hasMore){
+      return;
+    }
     //DO NOT modify below code
     this.setState({
       action: action
