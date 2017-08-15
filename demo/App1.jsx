@@ -54,7 +54,10 @@ export class App extends Component{
           index: loadMoreLimitNum
         });
       }, 3000)
-    } else if(action === STATS.loading){//加载更多
+    } else if(action === STATS.loading){//加载更多      
+      this.setState({
+        hasMore: true
+      });
       setTimeout(()=>{
         if(this.state.index === 0){
           this.setState({
