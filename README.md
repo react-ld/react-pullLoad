@@ -87,6 +87,10 @@ export class App extends Component{
     if(STATS.loading === this.state.action){
       return false
     }
+    //无更多内容则不执行后面逻辑
+    if(!this.state.hasMore){
+      return;
+    }
 
     setTimeout(()=>{
       if(this.state.index === 0){
