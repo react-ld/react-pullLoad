@@ -24,7 +24,9 @@ export default class FooterNode extends PureComponent{
 
     return(
       <div className={className}>
-        <i/>
+        {
+          loaderState === STATS.loading ? <i/> : ""
+        }
       </div>
     )
   }
