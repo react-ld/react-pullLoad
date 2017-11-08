@@ -2,7 +2,7 @@ html,body{margin: 0; padding: 0;}
 li{font-size: 20px; width: 100%;list-style: none;}
 img{width: 100%;}
 div, .test-ul, p{margin: 0; padding: 0;}
-.block{position: absolute; height: 100%;}
+.block{position: absolute; height: 100%;box-sizing: border-box;}
 
 button{
   display: inline-block;
