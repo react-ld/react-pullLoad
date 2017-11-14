@@ -4,7 +4,6 @@ import { findDOMNode } from 'react-dom'
 import { STATS } from './constants'
 import HeadNode from './HeadNode'
 import FooterNode from './FooterNode'
-import './ReactPullLoad.less'
 
 function addEvent(obj, type, fn) {
   if (obj.attachEvent) {

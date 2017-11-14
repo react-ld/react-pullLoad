@@ -6,11 +6,13 @@
   [pullLoad](https://github.com/lidianhao123/pullLoad) 非 react 版本，支持 require.js 模块化调用
 
 #### 示例
-[demo1](https://react-ld.github.io/react-pullLoad/index.html) document.body 作为容器
+[demo1](https://react-ld.github.io/react-pullLoad/index1.html) ReactPullLoad 根节点 DOM 作为容器
 
 [demo2](https://react-ld.github.io/react-pullLoad/index2.html) ReactPullLoad 根节点 DOM 作为容器
 
 [demo3](https://react-ld.github.io/react-pullLoad/index3.html) document.body 作为容器 且自定义刷新和加载更多 UI 组件
+
+[demo3](https://react-ld.github.io/react-pullLoad/index4.html) 禁用下拉刷新功能
 
 # 当前版本 1.0.4
 
@@ -37,6 +39,7 @@ npm install --save react-pullload
 
 ```js
 import ReactPullLoad,{ STATS } from 'react-pullload'
+import 'node_modules/react-pullload/dist/ReactPullLoad.css'
 
 export class App extends Component{
   constructor(){

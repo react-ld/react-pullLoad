@@ -1,14 +1,11 @@
 {
   "name": "react-pullload",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "React compopnent pull down refresh and pull up load more",
-  "main": "./lib/index.js",
+  "main": "./dist/index.js",
   "scripts": {
-    "start": "webpack-dev-server --hot --config webpack.demo.dev.config.js",
-    "build": "node_modules/babel-cli/bin/babel.js  src --out-dir lib && cp src/*.less lib/",
-    "demo": "webpack -p --optimize-dedupe --progress --config webpack.demo.config.js",
-    "clean:demos": "rm -rf ../github.io/tloader",
-    "clean:lib": "rm -rf lib/",
+    "start": "webpack-dev-server --config webpack.config.js",
+    "example": "rm -rf ./demo/* & NODE_ENV=development webpack --config webpack.config.example.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -26,6 +23,11 @@
   "bugs": {
     "url": "https://github.com/react-ld/react-pullLoad/issues"
   },
+  "files": [
+    "dist",
+    "example",
+    "src"
+  ],
   "homepage": "https://github.com/react-ld/react-pullLoad#readme",
   "devDependencies": {
     "autoprefixer": "^6.5.1",
@@ -37,6 +39,12 @@
     "babel-preset-react": "^6.16.0",
     "babel-preset-stage-1": "^6.16.0",
     "css-loader": "^0.25.0",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^7.0.0",
+    "gulp-clean": "^0.3.2",
+    "gulp-gh-pages": "^0.5.4",
+    "gulp-less": "^3.3.2",
+    "gulp-util": "^3.0.8",
     "html-webpack-plugin": "^2.22.0",
     "less": "^2.7.1",
     "less-loader": "^2.2.3",
@@ -46,7 +54,7 @@
     "react-dom": "^15.3.2",
     "react-hot-loader": "^3.0.0-beta.6",
     "style-loader": "^0.13.1",
-    "webpack": "^1.13.2",
-    "webpack-dev-server": "^1.16.2"
+    "webpack": "^2.6.1",
+    "webpack-dev-server": "^2.4.5"
   }
 }

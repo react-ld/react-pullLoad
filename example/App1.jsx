@@ -3,6 +3,7 @@ import React, { Component, PureComponent, PropTypes } from 'react'
 import { render } from 'react-dom'
 import ReactPullLoad,{STATS} from 'index.js'
 import './App.css'
+import '../src/ReactPullLoad.less'
 
 
 const defaultStyle ={
@@ -10,78 +11,6 @@ const defaultStyle ={
   textAlign: "center",
   fontSize: "20px",
   lineHeight: "1.5"
-}
-
-class HeadNode extends PureComponent{
-
-  static propTypes = {
-    loaderState: PropTypes.string.isRequired,
-  };
-
-  static defaultProps = {
-    loaderState: STATS.init,
-  };
-
-  render(){
-    const {
-      loaderState
-    } = this.props
-
-    let content = ""
-    if(loaderState == STATS.pulling){
-      content = "下拉刷新"
-    } else if(loaderState == STATS.enough){
-      content = "松开刷新"
-    } else if(loaderState == STATS.refreshing){
-      content = "正在刷新..."
-    } else if(loaderState == STATS.refreshed){
-      content = "刷新成功"
-    }
-
-    return(
-      <div style={defaultStyle}>
-        {content}
-      </div>
-    )
-  }
-}
-
-class FooterNode extends PureComponent{
-
-  static propTypes = {
-    loaderState: PropTypes.string.isRequired,
-    hasMore: PropTypes.bool.isRequired
-  };
-
-  static defaultProps = {
-    loaderState: STATS.init,
-    hasMore: true
-  };
-
-  render(){
-    const {
-      loaderState,
-      hasMore
-    } = this.props
-
-    let content = ""
-    // if(hasMore === false){
-    //   content = "没有更多"
-    // } else if(loaderState == STATS.loading && hasMore === true){
-    //   content = "加载中"
-    // } 
-    if(loaderState == STATS.loading){
-      content = "加载中"
-    } else if(hasMore === false){
-      content = "没有更多"
-    }
-
-    return(
-      <div style={defaultStyle}>
-        {content}
-      </div>
-    )
-  }
 }
 
 const loadMoreLimitNum = 2;
@@ -108,6 +37,7 @@ export class App extends Component{
   }
 
   handleAction = (action) => {
+    console.info(action, this.state.action,action === this.state.action);
     //new action must do not equel to old action
     if(action === this.state.action ||
        action === STATS.refreshing && this.state.action === STATS.loading ||
@@ -126,7 +56,10 @@ export class App extends Component{
           index: loadMoreLimitNum
         });
       }, 3000)
-    } else if(action === STATS.loading && this.state.hasMore){//加载更多
+    } else if(action === STATS.loading){//加载更多
+      this.setState({
+        hasMore: true
+      });
       setTimeout(()=>{
         if(this.state.index === 0){
           this.setState({
@@ -143,14 +76,21 @@ export class App extends Component{
       }, 3000)
     }
 
-    //无更多内容，不再加载数据
-    if(action === STATS.loading && !this.state.hasMore){
-      return;
-    }
     //DO NOT modify below code
     this.setState({
       action: action
     })
+  }
+
+  getScrollTop = ()=>{
+    if(this.refs.reactpullload){
+      console.info(this.refs.reactpullload.getScrollTop());
+    }
+  }
+  setScrollTop = ()=>{
+    if(this.refs.reactpullload){
+      console.info(this.refs.reactpullload.setScrollTop(100));
+    }
   }
   
   render(){
@@ -172,23 +112,34 @@ export class App extends Component{
       zIndex: 1
     }
 
+    const fixButtonStyle = {
+      position: "fixed",
+      top: 200,
+      width: "100%",
+    }
+
     return (
       <div>
         <div style={fixHeaderStyle}>
           fixed header    
         </div>
         <ReactPullLoad 
-          downEnough={100}
+          downEnough={150}
+          ref="reactpullload"
+          className="block"
+          isBlockContainer={true}
           action={this.state.action}
           handleAction={this.handleAction}
           hasMore={hasMore}
-          HeadNode={HeadNode}
-          FooterNode={FooterNode}
           style={{paddingTop: 50}}
           distanceBottom={1000}>
           <ul className="test-ul">
             <button onClick={this.handleAction.bind(this, STATS.refreshing)}>refreshing</button>
             <button onClick={this.handleAction.bind(this, STATS.loading)}>loading more</button>
+            <div style={fixButtonStyle}>
+              <button onClick={this.getScrollTop}>getScrollTop</button>
+              <button onClick={this.setScrollTop}>setScrollTop</button>
+            </div>
             {
               data.map( (str, index )=>{
                 return <li key={index}><img src={str} alt=""/></li>
