@@ -2,6 +2,7 @@ var webpack = require("webpack");
 var HtmlWebpackPlugin = require("html-webpack-plugin");
 var path = require("path");
 var port = 3010;
+var demoNum = 3;
 
 module.exports = {
   context: path.resolve(__dirname, "example"), // string（绝对路径！）
@@ -10,9 +11,9 @@ module.exports = {
   entry: [
     "react-hot-loader/patch",
     // 开启 React 代码的模块热替换(HMR)
-    "webpack-dev-server/client?http://localhost:" + port,
+    "webpack-dev-server/client?http://0.0.0.0:" + port,
     "webpack/hot/only-dev-server",
-    "./App1.jsx"
+    "./App"+demoNum+".jsx"
   ],
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
@@ -26,7 +27,7 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       title: "Custom template",
-      template: "./index1.html", // Load a custom template (ejs by default see the FAQ for details)
+      template: "./index"+demoNum+".html", // Load a custom template (ejs by default see the FAQ for details)
       hash: true,
       filename: "./index.html"
     })
@@ -38,7 +39,7 @@ module.exports = {
   devServer: {
     hot: true,
     // 开启服务器的模块热替换(HMR)
-    host: "localhost",
+    host: "0.0.0.0",
     port: port
   },
   module: {
