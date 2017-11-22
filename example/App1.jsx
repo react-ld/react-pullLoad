@@ -2,8 +2,8 @@
 import React, { Component, PureComponent, PropTypes } from 'react'
 import { render } from 'react-dom'
 import ReactPullLoad,{STATS} from 'index.js'
-import './App.css'
 import '../src/ReactPullLoad.less'
+import './App.css'
 
 
 const defaultStyle ={
@@ -42,7 +42,7 @@ export class App extends Component{
     if(action === this.state.action ||
        action === STATS.refreshing && this.state.action === STATS.loading ||
        action === STATS.loading && this.state.action === STATS.refreshing){
-      console.info("It's same action or on loading or on refreshing ",action, this.state.action,action === this.state.action);
+      // console.info("It's same action or on loading or on refreshing ",action, this.state.action,action === this.state.action);
       return false
     }
 

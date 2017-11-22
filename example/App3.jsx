@@ -2,8 +2,8 @@
 import React, { Component, PureComponent, PropTypes } from 'react'
 import { render } from 'react-dom'
 import ReactPullLoad,{STATS} from 'index.js'
-import './App.css'
 import '../src/ReactPullLoad.less'
+import './App.css'
 
 const defaultStyle ={
   width: "100%",
