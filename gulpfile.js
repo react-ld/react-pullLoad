@@ -42,7 +42,7 @@ gulp.task('demo:build', ['demo:file', 'demo:webpack']);
 // })
 
 //部署示例到 gh-pages
-gulp.task('deploy:gh-pages', function() {
+gulp.task('deploy:gh-pages', ['demo:build'], function() {
   return gulp.src('./demo/**')
     .pipe(ghPages());
 });
