@@ -11,7 +11,7 @@ function addEvent(obj, type, fn) {
     obj[type + fn] = function () { obj['e' + type + fn](window.event); }
     obj.attachEvent('on' + type, obj[type + fn]);
   } else
-    obj.addEventListener(type, fn, false);
+    obj.addEventListener(type, fn, false, {passive: false});
 }
 function removeEvent(obj, type, fn) {
   if (obj.detachEvent) {
@@ -96,6 +96,9 @@ export default class ReactPullLoad extends Component {
 
   getScrollTop = ()=>{
     if(this.defaultConfig.container){
+      if(this.defaultConfig.container === document.body){
+        return document.documentElement.scrollTop || document.body.scrollTop;
+      }
       return this.defaultConfig.container.scrollTop;
     } else{
       return 0;
@@ -180,7 +183,7 @@ export default class ReactPullLoad extends Component {
   }
 
   onTouchMove = (event) => {
-    let scrollTop = this.defaultConfig.container.scrollTop,
+    let scrollTop = this.getScrollTop(),
       scrollH = this.defaultConfig.container.scrollHeight,
       conH = this.defaultConfig.container === document.body ? document.documentElement.clientHeight : this.defaultConfig.container.offsetHeight,
       targetEvent = event.changedTouches[0],
@@ -212,7 +215,7 @@ export default class ReactPullLoad extends Component {
   }
 
   onTouchEnd = (event) => {
-    let scrollTop = this.defaultConfig.container.scrollTop,
+    let scrollTop = this.getScrollTop(),
       targetEvent = event.changedTouches[0],
       curX = targetEvent.clientX,
       curY = targetEvent.clientY,
