@@ -14,7 +14,7 @@
 
 [demo4](https://react-ld.github.io/react-pullLoad/index4.html) forbidden pull refresh
 
-# version 1.0.4
+# version 1.0.9
 
 # Description
 1. Only depend on react/react-dom, without any other package.

@@ -14,7 +14,7 @@
 
 [demo4](https://react-ld.github.io/react-pullLoad/index4.html) 禁用下拉刷新功能
 
-# 当前版本 1.0.4
+# 当前版本 1.0.9
 
 # 简介
 1. 只依赖 react/react-dom
