@@ -1,6 +1,6 @@
 {
   "name": "react-pullload",
-  "version": "1.0.9",
+  "version": "1.1.0",
   "description": "React compopnent pull down refresh and pull up load more",
   "main": "./dist/index.js",
   "scripts": {
@@ -42,7 +42,7 @@
     "gulp": "^3.9.1",
     "gulp-babel": "^7.0.0",
     "gulp-clean": "^0.3.2",
-    "gulp-gh-pages": "^0.5.4",
+    "gulp-gh-pages": "git@github.com:tekd/gulp-gh-pages.git#update-dependency",
     "gulp-less": "^3.3.2",
     "gulp-util": "^3.0.8",
     "html-webpack-plugin": "^2.22.0",
@@ -50,11 +50,14 @@
     "less-loader": "^2.2.3",
     "postcss": "^5.2.4",
     "postcss-loader": "^0.13.0",
-    "react": "^15.3.2",
-    "react-dom": "^15.3.2",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
     "react-hot-loader": "^3.0.0-beta.6",
     "style-loader": "^0.13.1",
     "webpack": "^2.6.1",
     "webpack-dev-server": "^2.4.5"
+  },
+  "dependencies": {
+    "prop-types": "^15.6.0"
   }
 }

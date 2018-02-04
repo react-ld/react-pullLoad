@@ -1,5 +1,6 @@
 
-import React, { Component, PureComponent, PropTypes } from 'react'
+import React, { Component, PureComponent } from 'react'
+import PropTypes from 'prop-types';
 import { render } from 'react-dom'
 import ReactPullLoad,{STATS} from 'index.js'
 import '../src/ReactPullLoad.less'
