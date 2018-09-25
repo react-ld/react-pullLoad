@@ -1,6 +1,6 @@
 {
   "name": "react-pullload",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "React compopnent pull down refresh and pull up load more",
   "main": "./dist/index.js",
   "scripts": {
